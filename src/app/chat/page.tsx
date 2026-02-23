@@ -1,14 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { CoachSidebar } from "@/components/sidebar/coach-sidebar"
-import { TopBar } from "@/components/header/top-bar"
-import { CoachContent } from "@/components/coach/coach-content"
+import { AppSidebar } from "@/components/sidebar/app-sidebar"
+import { TopBar, ConversationHeader } from "@/components/header/top-bar"
+import { ChatArea } from "@/components/chat/chat-area"
 import { cn } from "@/lib/utils"
 
-export default function Home() {
+export default function ChatPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
-  const [activeSection, setActiveSection] = useState("Calibration")
 
   return (
     <div
@@ -32,15 +31,15 @@ export default function Home() {
               sidebarOpen ? "w-[300px]" : "w-0"
             )}
           >
-            <CoachSidebar
-              activeSection={activeSection}
-              onSectionChange={setActiveSection}
-            />
+            <AppSidebar />
           </div>
 
           {/* Main area */}
           <div className="flex-1 flex flex-col min-w-0 bg-background">
-            <CoachContent activeSection={activeSection} />
+            <ConversationHeader />
+            <div className="flex-1 overflow-hidden">
+              <ChatArea />
+            </div>
           </div>
         </div>
       </div>
