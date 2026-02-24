@@ -106,31 +106,31 @@ function CalibrationCompletedView() {
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      <div className="flex-1 overflow-y-auto min-h-0 p-6 space-y-6">
-        {history.map((msg, i) => (
-          <div key={i}>
-            {msg.role === "assistant" ? (
-              <div className="max-w-[85%]">
-                <MessageContent content={msg.content} />
-              </div>
-            ) : (
-              <div className="flex justify-end">
-                <div className="bg-user-bubble text-user-bubble-foreground rounded-2xl rounded-br-md px-4 py-3 max-w-[85%]">
-                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
-                    {msg.content}
-                  </p>
+      <div className="flex-1 overflow-y-auto min-h-0 p-6">
+        <div className="max-w-2xl mx-auto w-full space-y-6">
+          {history.map((msg, i) => (
+            <div key={i}>
+              {msg.role === "assistant" ? (
+                <div>
+                  <MessageContent content={msg.content} />
                 </div>
-              </div>
-            )}
-          </div>
-        ))}
-        {closeMarkdown && (
-          <div className="max-w-[85%]">
+              ) : (
+                <div className="flex justify-end">
+                  <div className="bg-user-bubble text-user-bubble-foreground rounded-2xl rounded-br-md px-4 py-3">
+                    <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
+                      {msg.content}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+          {closeMarkdown && (
             <div className="rounded-lg border border-border bg-muted/30 p-4">
               <MarkdownRenderer content={closeMarkdown} />
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
@@ -139,13 +139,11 @@ function CalibrationCompletedView() {
 function TransparencyCompletedView() {
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      <div className="flex-1 overflow-y-auto min-h-0 p-6 space-y-6">
-        <div className="max-w-[85%]">
+      <div className="flex-1 overflow-y-auto min-h-0 p-6">
+        <div className="max-w-2xl mx-auto w-full space-y-6">
           <div className="prose-claude font-serif text-[15px] leading-relaxed">
             <MarkdownRenderer content={TRANSPARENCY_REPORT} />
           </div>
-        </div>
-        <div className="max-w-[85%]">
           <div className="rounded-lg border border-border bg-muted/30 p-4">
             <MarkdownRenderer content={TRANSPARENCY_WHY_MARKDOWN} />
           </div>
@@ -162,26 +160,28 @@ function FeedbackCompletedView() {
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
-      <div className="flex-1 overflow-y-auto min-h-0 p-6 space-y-6">
-        <p className="text-sm text-muted-foreground max-w-[85%]">
-          Thanks. Here&apos;s a short follow-up so we can both understand what
-          happened.
-        </p>
+      <div className="flex-1 overflow-y-auto min-h-0 p-6">
+        <div className="max-w-2xl mx-auto w-full space-y-6">
+          <p className="text-sm text-muted-foreground">
+            Thanks. Here&apos;s a short follow-up so we can both understand what
+            happened.
+          </p>
 
-        <div className="max-w-[85%]">
-          <MessageContent content={ai1} />
-        </div>
-
-        <div className="flex justify-end">
-          <div className="bg-user-bubble text-user-bubble-foreground rounded-2xl rounded-br-md px-4 py-3 max-w-[85%]">
-            <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
-              {userMsg}
-            </p>
+          <div>
+            <MessageContent content={ai1} />
           </div>
-        </div>
 
-        <div className="max-w-[85%]">
-          <MessageContent content={ai2} />
+          <div className="flex justify-end">
+            <div className="bg-user-bubble text-user-bubble-foreground rounded-2xl rounded-br-md px-4 py-3">
+              <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
+                {userMsg}
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <MessageContent content={ai2} />
+          </div>
         </div>
       </div>
     </div>

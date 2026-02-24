@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { X, Pencil, ChevronRight } from "lucide-react"
+import { Pencil, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -12,7 +12,6 @@ export interface SelectionOption {
 }
 
 interface SelectionPromptProps {
-  question: string
   options: SelectionOption[]
   onSelect: (optionIndex: number) => void
   onSkip?: () => void
@@ -22,7 +21,6 @@ interface SelectionPromptProps {
 }
 
 export function SelectionPrompt({
-  question,
   options,
   onSelect,
   onSkip,
@@ -46,20 +44,6 @@ export function SelectionPrompt({
         className
       )}
     >
-      <div className="flex items-start justify-between gap-3 mb-4">
-        <h3 className="text-sm font-medium text-foreground flex-1 pt-0.5">
-          {question}
-        </h3>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground"
-          aria-label="Close"
-        >
-          <X className="h-3.5 w-3.5" />
-        </Button>
-      </div>
-
       <div className="space-y-0.5">
         {options.map((opt, index) => {
           const isClickable = opt.clickable

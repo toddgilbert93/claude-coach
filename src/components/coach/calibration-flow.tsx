@@ -15,7 +15,7 @@ interface CalibrationFlowProps {
 
 function LoadingShimmer() {
   return (
-    <div className="max-w-[85%] py-2">
+    <div className="py-2">
       <span className="text-sm text-muted-foreground animate-text-shimmer">
         Thinking...
       </span>
@@ -115,73 +115,62 @@ export function CalibrationFlow({ onComplete }: CalibrationFlowProps) {
     <div className="flex-1 flex flex-col min-h-0">
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto min-h-0 p-6 space-y-6"
+        className="flex-1 overflow-y-auto min-h-0 p-6"
       >
-        {/* Past messages from history (we only push to history when we advance, so current step's AI message is not in history yet) */}
-        {history.map((msg, i) => (
-          <div key={i}>
-            {msg.role === "assistant" ? (
-              <div className="max-w-[85%]">
-                <MessageContent content={msg.content} />
-              </div>
-            ) : (
-              <div className="flex justify-end">
-                <div className="bg-user-bubble text-user-bubble-foreground rounded-2xl rounded-br-md px-4 py-3 max-w-[85%]">
-                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
-                    {msg.content}
-                  </p>
+        <div className="max-w-2xl mx-auto w-full space-y-6">
+          {history.map((msg, i) => (
+            <div key={i}>
+              {msg.role === "assistant" ? (
+                <div>
+                  <MessageContent content={msg.content} />
                 </div>
-              </div>
-            )}
-          </div>
-        ))}
+              ) : (
+                <div className="flex justify-end">
+                  <div className="bg-user-bubble text-user-bubble-foreground rounded-2xl rounded-br-md px-4 py-3">
+                    <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
+                      {msg.content}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
 
-        {/* Loading state before next message */}
-        {isLoading && (
-          <LoadingShimmer />
-        )}
+          {isLoading && <LoadingShimmer />}
 
-        {/* Current step: assistant message (hidden while loading) */}
-        {!isLoading && step.type !== "markdownClose" && (
-          <div className="max-w-[85%]">
-            <MessageContent content={step.aiMessage} />
-          </div>
-        )}
+          {!isLoading && step.type !== "markdownClose" && (
+            <div>
+              <MessageContent content={step.aiMessage} />
+            </div>
+          )}
 
-        {/* Current step: selection UI */}
-        {!isLoading && step.type === "selection" && (
-          <div className="max-w-lg">
+          {!isLoading && step.type === "selection" && (
             <SelectionPrompt
-              question={step.promptHeading ?? step.aiMessage}
               options={step.options}
               onSelect={handleSelect}
               showOpenResponse={step.showOpenResponse ?? false}
             />
-          </div>
-        )}
+          )}
 
-        {/* Auto-fill user bubble (typing) */}
-        {!isLoading && step.type === "autoFill" && autoFillVisible && (
-          <div className="flex justify-end">
-            <div className="bg-user-bubble text-user-bubble-foreground rounded-2xl rounded-br-md px-4 py-3 max-w-[85%]">
-              <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
-                {autoFillStep!.autoFillText.slice(0, typedLength)}
-                {typedLength < autoFillStep!.autoFillText.length && (
-                  <span className="animate-pulse">|</span>
-                )}
-              </p>
+          {!isLoading && step.type === "autoFill" && autoFillVisible && (
+            <div className="flex justify-end">
+              <div className="bg-user-bubble text-user-bubble-foreground rounded-2xl rounded-br-md px-4 py-3">
+                <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
+                  {autoFillStep!.autoFillText.slice(0, typedLength)}
+                  {typedLength < autoFillStep!.autoFillText.length && (
+                    <span className="animate-pulse">|</span>
+                  )}
+                </p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Markdown close */}
-        {!isLoading && step.type === "markdownClose" && (
-          <div className="max-w-[85%]">
+          {!isLoading && step.type === "markdownClose" && (
             <div className="rounded-lg border border-border bg-muted/30 p-4">
               <MarkdownRenderer content={step.markdown} />
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )

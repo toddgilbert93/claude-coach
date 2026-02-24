@@ -31,7 +31,7 @@ interface FeedbackFlowProps {
 
 function LoadingShimmer() {
   return (
-    <div className="max-w-[85%] py-2">
+    <div className="py-2">
       <span className="text-sm text-muted-foreground animate-text-shimmer">
         Thinking...
       </span>
@@ -159,7 +159,7 @@ export function FeedbackFlow({ onComplete }: FeedbackFlowProps) {
     return (
       <div className="flex-1 flex flex-col min-h-0">
         <div className="flex-1 overflow-y-auto min-h-0 p-6">
-          <div className="max-w-lg mx-auto space-y-4">
+          <div className="max-w-2xl mx-auto w-full space-y-4">
             <div className="space-y-2">
               <label
                 htmlFor="feedback-mistake"
@@ -222,17 +222,17 @@ export function FeedbackFlow({ onComplete }: FeedbackFlowProps) {
       <div className="flex-1 flex flex-col min-h-0">
         <div
           ref={scrollRef}
-          className="flex-1 overflow-y-auto min-h-0 p-6 space-y-6"
+          className="flex-1 overflow-y-auto min-h-0 p-6"
         >
-          <p className="text-sm text-muted-foreground max-w-[85%]">
-            Thanks. Here's a short follow-up so we can both understand what
-            happened.
-          </p>
+          <div className="max-w-2xl mx-auto w-full space-y-6">
+            <p className="text-sm text-muted-foreground">
+              Thanks. Here&apos;s a short follow-up so we can both understand what
+              happened.
+            </p>
 
-          {conversationStep === "loading1" && <LoadingShimmer />}
+            {conversationStep === "loading1" && <LoadingShimmer />}
 
-          {(showAi1Full || ai1Typing) && (
-            <div className="max-w-[85%]">
+            {(showAi1Full || ai1Typing) && (
               <div className="prose-claude font-serif text-[15px] leading-relaxed">
                 {showAi1Full ? (
                   <MessageContent content={AI1} />
@@ -245,13 +245,10 @@ export function FeedbackFlow({ onComplete }: FeedbackFlowProps) {
                   </span>
                 )}
               </div>
-            </div>
-          )}
+            )}
 
-          {conversationStep === "selection" && (
-            <div className="max-w-lg">
+            {conversationStep === "selection" && (
               <SelectionPrompt
-                question="Does that distinction feel useful?"
                 options={[
                   { label: USER_MSG, clickable: true },
                   { label: "Write a custom response", clickable: false },
@@ -259,23 +256,21 @@ export function FeedbackFlow({ onComplete }: FeedbackFlowProps) {
                 onSelect={handleSelection}
                 showOpenResponse={false}
               />
-            </div>
-          )}
+            )}
 
-          {pastSelection && (
-            <div className="flex justify-end">
-              <div className="bg-user-bubble text-user-bubble-foreground rounded-2xl rounded-br-md px-4 py-3 max-w-[85%]">
-                <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
-                  {USER_MSG}
-                </p>
+            {pastSelection && (
+              <div className="flex justify-end">
+                <div className="bg-user-bubble text-user-bubble-foreground rounded-2xl rounded-br-md px-4 py-3">
+                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
+                    {USER_MSG}
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {conversationStep === "loading2" && <LoadingShimmer />}
+            {conversationStep === "loading2" && <LoadingShimmer />}
 
-          {(showAi2Full || ai2Typing) && (
-            <div className="max-w-[85%]">
+            {(showAi2Full || ai2Typing) && (
               <div className="prose-claude font-serif text-[15px] leading-relaxed">
                 {showAi2Full ? (
                   <MessageContent content={AI2} />
@@ -288,8 +283,8 @@ export function FeedbackFlow({ onComplete }: FeedbackFlowProps) {
                   </span>
                 )}
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     )
