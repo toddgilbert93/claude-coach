@@ -4,6 +4,7 @@ import {
   SlidersHorizontal,
   Eye,
   AlertTriangle,
+  BarChart3,
   Download,
   ChevronsUpDown,
 } from "lucide-react"
@@ -17,6 +18,7 @@ const NAV_ITEMS = [
   { icon: SlidersHorizontal, label: "Calibration" },
   { icon: Eye, label: "Transparency" },
   { icon: AlertTriangle, label: "Feedback" },
+  { icon: BarChart3, label: "Patterns" },
 ]
 
 function formatCompletedDate(date: Date) {

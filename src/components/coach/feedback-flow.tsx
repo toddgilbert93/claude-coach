@@ -9,6 +9,8 @@ import {
   FEEDBACK_FORM,
   FEEDBACK_FOLLOW_UP_MESSAGES,
   FEEDBACK_AUTOFILL,
+  FEEDBACK_END_OPTIONS,
+  FEEDBACK_WHY_MARKDOWN,
 } from "./feedback-data"
 
 const BODY_TYPING_MS_PER_CHAR = 3
@@ -23,6 +25,8 @@ type ConversationStep =
   | "userBubble"
   | "loading2"
   | "typing2"
+  | "endSelection"
+  | "loadingClose"
   | "done"
 
 interface FeedbackFlowProps {
@@ -123,12 +127,12 @@ export function FeedbackFlow({ onComplete }: FeedbackFlowProps) {
     return () => clearTimeout(t)
   }, [phase, conversationStep])
 
-  // typing2: type out AI2, then -> done (auto-complete)
+  // typing2: type out AI2, then -> endSelection
   useEffect(() => {
     if (phase !== "conversation" || conversationStep !== "typing2") return
     if (typedLength >= AI2.length) {
       const t = setTimeout(() => {
-        setConversationStep("done")
+        setConversationStep("endSelection")
       }, POST_TYPING_DELAY_MS)
       return () => clearTimeout(t)
     }
@@ -138,6 +142,20 @@ export function FeedbackFlow({ onComplete }: FeedbackFlowProps) {
     )
     return () => clearTimeout(t)
   }, [phase, conversationStep, typedLength])
+
+  const [endSelectionLabel, setEndSelectionLabel] = useState("")
+
+  const handleEndSelect = useCallback((index: number) => {
+    if (index !== 1) return
+    setEndSelectionLabel(FEEDBACK_END_OPTIONS[index]?.label ?? "")
+    setConversationStep("loadingClose")
+  }, [])
+
+  useEffect(() => {
+    if (phase !== "conversation" || conversationStep !== "loadingClose") return
+    const t = setTimeout(() => setConversationStep("done"), LOADING_DELAY_MS)
+    return () => clearTimeout(t)
+  }, [phase, conversationStep])
 
   useEffect(() => {
     if (conversationStep === "done") onComplete()
@@ -209,7 +227,7 @@ export function FeedbackFlow({ onComplete }: FeedbackFlowProps) {
 
   if (phase === "conversation") {
     const stepOrder: ConversationStep[] = [
-      "loading1", "typing1", "selection", "userBubble", "loading2", "typing2", "done",
+      "loading1", "typing1", "selection", "userBubble", "loading2", "typing2", "endSelection", "loadingClose", "done",
     ]
     const currentIdx = stepOrder.indexOf(conversationStep)
     const pastSelection = currentIdx > stepOrder.indexOf("selection")
@@ -282,6 +300,34 @@ export function FeedbackFlow({ onComplete }: FeedbackFlowProps) {
                     )}
                   </span>
                 )}
+              </div>
+            )}
+
+            {conversationStep === "endSelection" && (
+              <SelectionPrompt
+                options={FEEDBACK_END_OPTIONS}
+                onSelect={handleEndSelect}
+                showOpenResponse={false}
+              />
+            )}
+
+            {currentIdx > stepOrder.indexOf("endSelection") && endSelectionLabel && (
+              <div className="flex justify-end">
+                <div className="bg-user-bubble text-user-bubble-foreground rounded-2xl rounded-br-md px-4 py-3">
+                  <p className="text-[15px] leading-relaxed whitespace-pre-wrap">
+                    {endSelectionLabel}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {conversationStep === "loadingClose" && <LoadingShimmer />}
+
+            {conversationStep === "done" && (
+              <div className="rounded-lg border border-border bg-muted/30 p-4">
+                <div className="prose-claude font-serif text-[15px] leading-relaxed">
+                  <MarkdownRenderer content={FEEDBACK_WHY_MARKDOWN} />
+                </div>
               </div>
             )}
           </div>

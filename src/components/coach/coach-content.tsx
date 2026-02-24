@@ -1,16 +1,18 @@
 "use client"
 
-import { SlidersHorizontal, Eye, AlertTriangle } from "lucide-react"
+import { SlidersHorizontal, Eye, AlertTriangle, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CalibrationFlow } from "./calibration-flow"
 import { TransparencyFlow } from "./transparency-flow"
 import { FeedbackFlow } from "./feedback-flow"
+import { PatternsFlow, PushbackCard } from "./patterns-flow"
 import { MarkdownRenderer } from "@/components/chat/markdown-renderer"
 import { CALIBRATION_STEPS } from "./calibration-data"
 import {
   TRANSPARENCY_REPORT,
   TRANSPARENCY_WHY_MARKDOWN,
 } from "./transparency-data"
+import { PATTERNS_ZERO_STATE_DESCRIPTION } from "./patterns-data"
 import { FEEDBACK_FOLLOW_UP_MESSAGES } from "./feedback-data"
 import type { CompletedSession } from "@/app/page"
 
@@ -34,6 +36,11 @@ const SECTIONS: Record<
     title: "Feedback",
     description:
       "Report when the AI got something wrong and what impact it had. A short follow-up helps both of you understand what happened.",
+  },
+  Patterns: {
+    icon: BarChart3,
+    title: "Patterns",
+    description: PATTERNS_ZERO_STATE_DESCRIPTION,
   },
 }
 
@@ -188,6 +195,18 @@ function FeedbackCompletedView() {
   )
 }
 
+function PatternsCompletedView() {
+  return (
+    <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 overflow-y-auto min-h-0 p-6">
+        <div className="max-w-2xl mx-auto w-full space-y-6">
+          <PushbackCard />
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function CoachContent({
   activeSection,
   calibrationSession,
@@ -199,6 +218,9 @@ export function CoachContent({
   feedbackSession,
   onFeedbackStart,
   onFeedbackComplete,
+  patternsSession,
+  onPatternsStart,
+  onPatternsComplete,
   viewingCompletedSession,
   completedSessions,
 }: {
@@ -212,6 +234,9 @@ export function CoachContent({
   feedbackSession: { startedAt: Date } | null
   onFeedbackStart: () => void
   onFeedbackComplete: () => void
+  patternsSession: { startedAt: Date } | null
+  onPatternsStart: () => void
+  onPatternsComplete: () => void
   viewingCompletedSession: CompletedSession | null
   completedSessions: CompletedSession[]
 }) {
@@ -230,6 +255,9 @@ export function CoachContent({
         {viewingCompletedSession.type === "Feedback" && (
           <FeedbackCompletedView />
         )}
+        {viewingCompletedSession.type === "Patterns" && (
+          <PatternsCompletedView />
+        )}
       </div>
     )
   }
@@ -242,6 +270,9 @@ export function CoachContent({
   )
   const feedbackCompleted = completedSessions.some(
     (s) => s.type === "Feedback"
+  )
+  const patternsCompleted = completedSessions.some(
+    (s) => s.type === "Patterns"
   )
 
   return (
@@ -279,6 +310,17 @@ export function CoachContent({
           <FeedbackFlow onComplete={onFeedbackComplete} />
         </div>
       )}
+      {patternsSession && (
+        <div
+          className={
+            activeSection === "Patterns"
+              ? "flex-1 flex flex-col min-h-0"
+              : "hidden"
+          }
+        >
+          <PatternsFlow onComplete={onPatternsComplete} />
+        </div>
+      )}
       {activeSection === "Calibration" && !calibrationSession && (
         <ZeroState
           sectionKey="Calibration"
@@ -301,6 +343,14 @@ export function CoachContent({
           isCompleted={feedbackCompleted}
           onAction={onFeedbackStart}
           actionLabel="Add feedback"
+        />
+      )}
+      {activeSection === "Patterns" && !patternsSession && (
+        <ZeroState
+          sectionKey="Patterns"
+          isCompleted={patternsCompleted}
+          onAction={onPatternsStart}
+          actionLabel="View patterns"
         />
       )}
     </div>

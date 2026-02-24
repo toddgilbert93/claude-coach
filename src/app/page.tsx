@@ -6,7 +6,11 @@ import { TopBar } from "@/components/header/top-bar"
 import { CoachContent } from "@/components/coach/coach-content"
 import { cn } from "@/lib/utils"
 
-export type CompletedSessionType = "Calibration" | "Transparency" | "Feedback"
+export type CompletedSessionType =
+  | "Calibration"
+  | "Transparency"
+  | "Feedback"
+  | "Patterns"
 
 export type CompletedSession = {
   type: CompletedSessionType
@@ -51,6 +55,9 @@ export default function Home() {
   const [feedbackSession, setFeedbackSession] = useState<{
     startedAt: Date
   } | null>(null)
+  const [patternsSession, setPatternsSession] = useState<{
+    startedAt: Date
+  } | null>(null)
   const [completedSessions, setCompletedSessions] = useState<CompletedSession[]>(
     []
   )
@@ -58,6 +65,7 @@ export default function Home() {
     Calibration: true,
     Transparency: true,
     Feedback: true,
+    Patterns: true,
   })
   const prevSectionRef = useRef(activeSection)
   useEffect(() => {
@@ -68,6 +76,7 @@ export default function Home() {
         if (prev === "Calibration") setCalibrationSession(null)
         if (prev === "Transparency") setTransparencySession(null)
         if (prev === "Feedback") setFeedbackSession(null)
+        if (prev === "Patterns") setPatternsSession(null)
       }
       prevSectionRef.current = activeSection
     }
@@ -152,6 +161,20 @@ export default function Home() {
     }, 1200)
   }, [])
 
+  const handlePatternsStart = useCallback(
+    () => setPatternsSession({ startedAt: new Date() }),
+    []
+  )
+  const handlePatternsComplete = useCallback(() => {
+    setAlerts((prev) => ({ ...prev, Patterns: false }))
+    setTimeout(() => {
+      setCompletedSessions((prev) => [
+        ...prev,
+        { type: "Patterns", completedAt: new Date() },
+      ])
+    }, 1200)
+  }, [])
+
   const viewingCompletedSession =
     viewingCompletedIndex !== null
       ? completedSessions[viewingCompletedIndex] ?? null
@@ -206,6 +229,9 @@ export default function Home() {
               feedbackSession={feedbackSession}
               onFeedbackStart={handleFeedbackStart}
               onFeedbackComplete={handleFeedbackComplete}
+              patternsSession={patternsSession}
+              onPatternsStart={handlePatternsStart}
+              onPatternsComplete={handlePatternsComplete}
               viewingCompletedSession={viewingCompletedSession}
               completedSessions={completedSessions}
             />

@@ -1,3 +1,5 @@
+import type { SelectionOption } from "./selection-prompt"
+
 /** Form labels and placeholders for the feedback form */
 export const FEEDBACK_FORM = {
   mistakeLabel: "What did the AI get wrong or do that felt like a mistake?",
@@ -38,3 +40,22 @@ export const FEEDBACK_FOLLOW_UP_MESSAGES: FollowUpMessage[] = [
       "Good. I'll try to read those signals better — and you have a lever: when you've already decided, naming it up front shifts how I show up. If something like this happens again, feedback like this is exactly what clarifies it. Thanks for taking the time.",
   },
 ]
+
+export const FEEDBACK_END_OPTIONS: SelectionOption[] = [
+  { label: "Got it — I'll keep that in mind", clickable: false },
+  { label: "Tell me why submitting this kind of feedback matters", clickable: true },
+]
+
+export const FEEDBACK_WHY_MARKDOWN = `**Why Feedback?**
+
+Most AI tools treat every conversation the same regardless of outcome. Feedback changes that.
+
+**What this does:**
+
+- **Creates a correction record** — when the AI gets something wrong, naming it turns a one-off frustration into something the system can learn from. Without it, the same mistake keeps happening in new contexts.
+- **Surfaces your steering patterns** — over time, the feedback you submit reveals how you're learning to direct the model: what signals work, where you're still losing time, and which kinds of errors actually cost you something.
+- **Separates annoyance from impact** — not every mistake matters equally. Describing the effect helps distinguish "that was wrong" from "that cost me two days of confidence."
+
+**Why it matters**
+
+The goal isn't to report every flaw. It's to flag the ones that changed something — your direction, your trust, your momentum. That's what makes the difference between an AI that repeats itself and one that adapts to how you actually work.`
