@@ -5,7 +5,7 @@ import { CALIBRATION_STEPS, type CalibrationStep } from "./calibration-data"
 import { SelectionPrompt } from "./selection-prompt"
 import { MarkdownRenderer } from "@/components/chat/markdown-renderer"
 
-const TYPING_MS_PER_CHAR = 25
+const TYPING_MS_PER_CHAR = 3
 const POST_TYPING_DELAY_MS = 800
 const LOADING_DELAY_MS = 1600
 

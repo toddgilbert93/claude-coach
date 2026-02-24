@@ -33,20 +33,24 @@ export function CoachSidebar({
   completedSessions = [],
   onCompletedClick,
   alerts = {},
+  activeCompletedIndex = null,
 }: {
   activeSection: string
   onSectionChange: (section: string) => void
   completedSessions?: CompletedSession[]
   onCompletedClick?: (index: number) => void
   alerts?: Record<string, boolean>
+  activeCompletedIndex?: number | null
 }) {
+  const viewingCompleted = activeCompletedIndex !== null
+
   return (
     <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground">
       {/* Top section */}
       <div className="p-3 space-y-1">
         {/* Nav links */}
         {NAV_ITEMS.map((item) => {
-          const isActive = item.label === activeSection
+          const isActive = !viewingCompleted && item.label === activeSection
           return (
             <Button
               key={item.label}
@@ -87,16 +91,24 @@ export function CoachSidebar({
       <div className="flex-1 overflow-y-auto min-h-0 px-1.5">
         {completedSessions.length > 0 ? (
           <div className="space-y-0.5 py-1">
-            {completedSessions.map((session, index) => (
-              <Button
-                key={`${session.type}-${session.completedAt.getTime()}-${index}`}
-                variant="ghost"
-                className="w-full justify-start text-sm font-normal h-8 text-left truncate px-3"
-                onClick={() => onCompletedClick?.(index)}
-              >
-                {session.type} {formatCompletedDate(session.completedAt)}
-              </Button>
-            ))}
+            {completedSessions.map((session, index) => {
+              const isActive = activeCompletedIndex === index
+              return (
+                <Button
+                  key={`${session.type}-${session.completedAt.getTime()}-${index}`}
+                  variant="ghost"
+                  className={cn(
+                    "w-full justify-start text-sm font-normal h-9 px-3",
+                    isActive
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                  onClick={() => onCompletedClick?.(index)}
+                >
+                  {session.type} {formatCompletedDate(session.completedAt)}
+                </Button>
+              )
+            })}
           </div>
         ) : (
           <div className="px-3 py-6 text-center">

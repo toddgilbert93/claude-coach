@@ -110,6 +110,48 @@ export default function Home() {
     [completedSessions, navigateTo]
   )
 
+  const handleCalibrationStart = useCallback(
+    () => setCalibrationSession({ startedAt: new Date() }),
+    []
+  )
+  const handleCalibrationComplete = useCallback(() => {
+    setAlerts((prev) => ({ ...prev, Calibration: false }))
+    setTimeout(() => {
+      setCompletedSessions((prev) => [
+        ...prev,
+        { type: "Calibration", completedAt: new Date() },
+      ])
+    }, 1200)
+  }, [])
+
+  const handleTransparencyStart = useCallback(
+    () => setTransparencySession({ startedAt: new Date() }),
+    []
+  )
+  const handleTransparencyComplete = useCallback(() => {
+    setAlerts((prev) => ({ ...prev, Transparency: false }))
+    setTimeout(() => {
+      setCompletedSessions((prev) => [
+        ...prev,
+        { type: "Transparency", completedAt: new Date() },
+      ])
+    }, 1200)
+  }, [])
+
+  const handleFeedbackStart = useCallback(
+    () => setFeedbackSession({ startedAt: new Date() }),
+    []
+  )
+  const handleFeedbackComplete = useCallback(() => {
+    setAlerts((prev) => ({ ...prev, Feedback: false }))
+    setTimeout(() => {
+      setCompletedSessions((prev) => [
+        ...prev,
+        { type: "Feedback", completedAt: new Date() },
+      ])
+    }, 1200)
+  }, [])
+
   const viewingCompletedSession =
     viewingCompletedIndex !== null
       ? completedSessions[viewingCompletedIndex] ?? null
@@ -147,6 +189,7 @@ export default function Home() {
               completedSessions={completedSessions}
               onCompletedClick={handleCompletedClick}
               alerts={alerts}
+              activeCompletedIndex={viewingCompletedIndex}
             />
           </div>
 
@@ -155,38 +198,14 @@ export default function Home() {
             <CoachContent
               activeSection={activeSection}
               calibrationSession={calibrationSession}
-              onCalibrationStart={() =>
-                setCalibrationSession({ startedAt: new Date() })
-              }
-              onCalibrationComplete={() => {
-                setAlerts((prev) => ({ ...prev, Calibration: false }))
-                setCompletedSessions((prev) => [
-                  ...prev,
-                  { type: "Calibration", completedAt: new Date() },
-                ])
-              }}
+              onCalibrationStart={handleCalibrationStart}
+              onCalibrationComplete={handleCalibrationComplete}
               transparencySession={transparencySession}
-              onTransparencyStart={() =>
-                setTransparencySession({ startedAt: new Date() })
-              }
-              onTransparencyComplete={() => {
-                setAlerts((prev) => ({ ...prev, Transparency: false }))
-                setCompletedSessions((prev) => [
-                  ...prev,
-                  { type: "Transparency", completedAt: new Date() },
-                ])
-              }}
+              onTransparencyStart={handleTransparencyStart}
+              onTransparencyComplete={handleTransparencyComplete}
               feedbackSession={feedbackSession}
-              onFeedbackStart={() =>
-                setFeedbackSession({ startedAt: new Date() })
-              }
-              onFeedbackComplete={() => {
-                setAlerts((prev) => ({ ...prev, Feedback: false }))
-                setCompletedSessions((prev) => [
-                  ...prev,
-                  { type: "Feedback", completedAt: new Date() },
-                ])
-              }}
+              onFeedbackStart={handleFeedbackStart}
+              onFeedbackComplete={handleFeedbackComplete}
               viewingCompletedSession={viewingCompletedSession}
               completedSessions={completedSessions}
             />

@@ -11,7 +11,7 @@ import {
   FEEDBACK_AUTOFILL,
 } from "./feedback-data"
 
-const BODY_TYPING_MS_PER_CHAR = 8
+const BODY_TYPING_MS_PER_CHAR = 3
 const POST_TYPING_DELAY_MS = 600
 const LOADING_DELAY_MS = 1600
 
