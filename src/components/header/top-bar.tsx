@@ -9,29 +9,56 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useChatStore } from "@/hooks/use-chat-store"
 import { cn } from "@/lib/utils"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 const TABS = ["Chat", "Cowork", "Code", "Coach"] as const
+
+function useIsNarrow() {
+  const [isNarrow, setIsNarrow] = useState(false)
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 780px)")
+    const handler = () => setIsNarrow(mql.matches)
+    handler()
+    mql.addEventListener("change", handler)
+    return () => mql.removeEventListener("change", handler)
+  }, [])
+  return isNarrow
+}
 
 export function TopBar({
   onToggleSidebar,
   sidebarOpen,
+  onGoBack,
+  onGoForward,
+  canGoBack,
+  canGoForward,
 }: {
   onToggleSidebar: () => void
   sidebarOpen: boolean
+  onGoBack: () => void
+  onGoForward: () => void
+  canGoBack: boolean
+  canGoForward: boolean
 }) {
   const [activeTab, setActiveTab] = useState<string>("Coach")
+  const isNarrow = useIsNarrow()
 
   return (
     <div className="relative flex items-center h-12 px-3 bg-sidebar border-b border-sidebar-border shrink-0">
       {/* Left: macOS traffic lights + sidebar toggle + nav arrows */}
-      <div className="flex items-center gap-0.5">
+      <div className="relative z-10 flex items-center gap-0.5 pr-4 bg-sidebar">
         <TrafficLights />
         <div className="w-3 shrink-0" />
         <Button
@@ -45,14 +72,22 @@ export function TopBar({
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          className={cn(
+            "h-8 w-8 text-muted-foreground hover:text-foreground",
+            !canGoBack && "opacity-40 pointer-events-none"
+          )}
+          onClick={onGoBack}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          className={cn(
+            "h-8 w-8 text-muted-foreground hover:text-foreground",
+            !canGoForward && "opacity-40 pointer-events-none"
+          )}
+          onClick={onGoForward}
         >
           <ArrowRight className="h-4 w-4" />
         </Button>
@@ -60,51 +95,87 @@ export function TopBar({
 
       {/* Center: tab group — absolutely positioned for true centering */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="flex items-center bg-secondary/60 rounded-lg p-0.5 pointer-events-auto">
-          {TABS.map((tab) => {
-            const isCoach = tab === "Coach"
-            const tabButton = (
-              <button
-                key={tab}
-                onClick={isCoach ? () => setActiveTab(tab) : undefined}
-                className={cn(
-                  "px-4 py-1 text-sm font-medium rounded-md transition-colors",
-                  activeTab === tab
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground",
-                  !isCoach && "cursor-default"
-                )}
-              >
-                {tab}
-              </button>
-            )
-
-            if (isCoach) return tabButton
-
-            return (
-              <Tooltip key={tab} delayDuration={200}>
-                <TooltipTrigger asChild>{tabButton}</TooltipTrigger>
-                <TooltipContent
-                  side="bottom"
-                  className="text-xs"
+        {!isNarrow && (
+          <div className="flex items-center bg-secondary/60 rounded-lg p-0.5 pointer-events-auto">
+            {TABS.map((tab) => {
+              const isCoach = tab === "Coach"
+              const tabButton = (
+                <button
+                  key={tab}
+                  onClick={isCoach ? () => setActiveTab(tab) : undefined}
+                  className={cn(
+                    "px-4 py-1 text-sm font-medium rounded-md transition-colors",
+                    activeTab === tab
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground",
+                    !isCoach && "cursor-default"
+                  )}
                 >
-                  Only coach is available for this prototype.
-                </TooltipContent>
-              </Tooltip>
-            )
-          })}
-        </div>
+                  {tab}
+                </button>
+              )
+
+              if (isCoach) return tabButton
+
+              return (
+                <Tooltip key={tab} delayDuration={200}>
+                  <TooltipTrigger asChild>{tabButton}</TooltipTrigger>
+                  <TooltipContent
+                    side="bottom"
+                    className="text-xs"
+                  >
+                    Only coach is available for this prototype.
+                  </TooltipContent>
+                </Tooltip>
+              )
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Right: team/share icon */}
+      {/* Right: nav dropdown when narrow + Users icon — elevated so center can't overlap */}
       <div className="flex-1" />
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8 text-muted-foreground hover:text-foreground"
-      >
-        <Users className="h-4 w-4" />
-      </Button>
+      <div className="relative z-10 flex items-center gap-6 pl-4 bg-sidebar">
+        {isNarrow && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="h-8 gap-1.5 px-3 text-sm font-medium bg-secondary/60 hover:bg-secondary/80 rounded-lg"
+              >
+                <span>{activeTab}</span>
+                <ChevronDown className="h-3.5 w-3.5 opacity-70" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              {TABS.map((tab) => (
+                <DropdownMenuItem
+                  key={tab}
+                  onClick={() => tab === "Coach" && setActiveTab(tab)}
+                  className={cn(
+                    activeTab === tab && "bg-accent",
+                    tab !== "Coach" && "opacity-60 cursor-default"
+                  )}
+                >
+                  {tab}
+                  {tab !== "Coach" && (
+                    <span className="ml-auto text-xs text-muted-foreground">
+                      Soon
+                    </span>
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+        >
+          <Users className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   )
 }

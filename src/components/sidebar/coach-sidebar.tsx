@@ -3,29 +3,43 @@
 import {
   SlidersHorizontal,
   Eye,
-  MessageCircle,
+  AlertTriangle,
   Download,
   ChevronsUpDown,
 } from "lucide-react"
+import type { CompletedSession } from "@/app/page"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 
 const NAV_ITEMS = [
-  { icon: SlidersHorizontal, label: "Calibration", alert: true },
+  { icon: SlidersHorizontal, label: "Calibration" },
   { icon: Eye, label: "Transparency" },
-  { icon: MessageCircle, label: "Feedback" },
+  { icon: AlertTriangle, label: "Feedback" },
 ]
+
+function formatCompletedDate(date: Date) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date)
+}
 
 export function CoachSidebar({
   activeSection,
   onSectionChange,
+  completedSessions = [],
+  onCompletedClick,
+  alerts = {},
 }: {
   activeSection: string
   onSectionChange: (section: string) => void
+  completedSessions?: CompletedSession[]
+  onCompletedClick?: (index: number) => void
+  alerts?: Record<string, boolean>
 }) {
-
   return (
     <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground">
       {/* Top section */}
@@ -47,7 +61,7 @@ export function CoachSidebar({
             >
               <span className="relative shrink-0">
                 <item.icon className="h-4 w-4" />
-                {item.alert && (
+                {alerts[item.label] && (
                   <span
                     className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-sky-400 ring-2 ring-sidebar"
                     aria-hidden
@@ -62,18 +76,35 @@ export function CoachSidebar({
 
       <Separator className="bg-sidebar-border" />
 
-      {/* Recents label */}
+      {/* Completed label */}
       <div className="px-4 pt-3 pb-1">
         <span className="text-xs text-muted-foreground font-medium">
-          Recents
+          Completed
         </span>
       </div>
 
-      {/* Empty recents area */}
+      {/* Completed list — only shows items after each flow is complete; clickable */}
       <div className="flex-1 overflow-y-auto min-h-0 px-1.5">
-        <div className="px-3 py-6 text-center">
-          <p className="text-xs text-muted-foreground">No recent sessions</p>
-        </div>
+        {completedSessions.length > 0 ? (
+          <div className="space-y-0.5 py-1">
+            {completedSessions.map((session, index) => (
+              <Button
+                key={`${session.type}-${session.completedAt.getTime()}-${index}`}
+                variant="ghost"
+                className="w-full justify-start text-sm font-normal h-8 text-left truncate px-3"
+                onClick={() => onCompletedClick?.(index)}
+              >
+                {session.type} {formatCompletedDate(session.completedAt)}
+              </Button>
+            ))}
+          </div>
+        ) : (
+          <div className="px-3 py-6 text-center">
+            <p className="text-xs text-muted-foreground">
+              No completed sessions
+            </p>
+          </div>
+        )}
       </div>
 
       {/* User footer */}
