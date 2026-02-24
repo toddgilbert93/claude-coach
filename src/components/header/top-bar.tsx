@@ -47,10 +47,10 @@ export function TopBar({
 }: {
   onToggleSidebar: () => void
   sidebarOpen: boolean
-  onGoBack: () => void
-  onGoForward: () => void
-  canGoBack: boolean
-  canGoForward: boolean
+  onGoBack?: () => void
+  onGoForward?: () => void
+  canGoBack?: boolean
+  canGoForward?: boolean
 }) {
   const [activeTab, setActiveTab] = useState<string>("Coach")
   const isNarrow = useIsNarrow()
