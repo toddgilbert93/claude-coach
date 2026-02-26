@@ -5,13 +5,20 @@ import {
   Eye,
   AlertTriangle,
   BarChart3,
-  Download,
+  Globe,
+  Linkedin,
   ChevronsUpDown,
+  ExternalLink,
 } from "lucide-react"
 import type { CompletedSession } from "@/app/page"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 
 const NAV_ITEMS = [
@@ -123,31 +130,60 @@ export function CoachSidebar({
 
       {/* User footer */}
       <Separator className="bg-sidebar-border" />
-      <div className="p-3 flex items-center gap-2">
-        <Avatar className="h-8 w-8 bg-sidebar-accent text-sidebar-accent-foreground">
-          <AvatarFallback className="text-xs font-medium bg-sidebar-accent">
-            TG
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1 min-w-0">
-          <div className="text-sm font-medium truncate">Todd Gilbert</div>
-          <div className="text-xs text-muted-foreground">Pro plan</div>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7 text-muted-foreground"
+      <Popover>
+        <PopoverTrigger asChild>
+          <button className="w-full p-3 flex items-center gap-2 hover:bg-sidebar-accent/50 transition-colors cursor-pointer text-left">
+            <Avatar className="h-8 w-8 bg-sidebar-accent text-sidebar-accent-foreground">
+              <AvatarFallback className="text-xs font-medium bg-sidebar-accent">
+                TG
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-medium truncate">Todd Gilbert</div>
+              <div className="text-xs text-muted-foreground">Pro plan</div>
+            </div>
+            <ChevronsUpDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent
+          side="top"
+          align="center"
+          className="p-0 rounded-xl"
+          sideOffset={8}
+          style={{
+            width: "calc(var(--radix-popover-trigger-width) - 16px)",
+          }}
         >
-          <Download className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7 text-muted-foreground"
-        >
-          <ChevronsUpDown className="h-3.5 w-3.5" />
-        </Button>
-      </div>
+          <div className="px-4 py-3">
+            <span className="text-sm text-muted-foreground">
+              toddgilbert93@gmail.com
+            </span>
+          </div>
+          <Separator />
+          <div className="p-1.5">
+            <a
+              href="https://tgdesign.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+            >
+              <Globe className="h-4 w-4 shrink-0" />
+              My website
+              <ExternalLink className="h-3 w-3 ml-auto text-muted-foreground" />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/toddgilbertux/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
+            >
+              <Linkedin className="h-4 w-4 shrink-0" />
+              LinkedIn
+              <ExternalLink className="h-3 w-3 ml-auto text-muted-foreground" />
+            </a>
+          </div>
+        </PopoverContent>
+      </Popover>
     </div>
   )
 }

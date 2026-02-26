@@ -4,7 +4,6 @@ import {
   PanelLeft,
   ArrowLeft,
   ArrowRight,
-  Users,
   ChevronDown,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -168,13 +167,6 @@ export function TopBar({
             </DropdownMenuContent>
           </DropdownMenu>
         )}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
-        >
-          <Users className="h-4 w-4" />
-        </Button>
       </div>
     </div>
   )
