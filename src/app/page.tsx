@@ -182,11 +182,11 @@ export default function Home() {
 
   return (
     <div
-      className="h-screen w-screen flex items-center justify-center p-8 bg-cover bg-center bg-no-repeat"
+      className="h-screen w-screen flex items-center justify-center p-0 sm:p-8 sm:bg-cover sm:bg-center sm:bg-no-repeat"
       style={{ backgroundImage: "url('/desktop.jpg')" }}
     >
       {/* App window */}
-      <div className="flex flex-col w-full max-w-[1000px] h-[calc(100vh-64px)] rounded-xl overflow-hidden border border-white/[0.08] shadow-2xl shadow-black/50">
+      <div className="flex flex-col w-full max-w-[1000px] h-screen sm:h-[calc(100vh-64px)] sm:rounded-xl overflow-hidden sm:border sm:border-white/[0.08] sm:shadow-2xl sm:shadow-black/50">
         {/* Top bar — full width, like a native title bar */}
         <TopBar
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
@@ -198,12 +198,19 @@ export default function Home() {
         />
 
         {/* Content: sidebar + main */}
-        <div className="flex flex-1 min-h-0">
+        <div className="relative flex flex-1 min-h-0">
           {/* Sidebar */}
           <div
             className={cn(
               "shrink-0 transition-all duration-200 overflow-hidden",
-              isNarrow ? "w-0" : sidebarOpen ? "w-[300px] border-r border-sidebar-border" : "w-0"
+              isNarrow
+                ? cn(
+                    "absolute inset-y-0 left-0 z-30 w-[300px]",
+                    sidebarOpen ? "translate-x-0" : "-translate-x-full"
+                  )
+                : sidebarOpen
+                  ? "w-[300px] border-r border-sidebar-border"
+                  : "w-0"
             )}
           >
             <CoachSidebar
@@ -215,6 +222,14 @@ export default function Home() {
               activeCompletedIndex={viewingCompletedIndex}
             />
           </div>
+
+          {/* Overlay to close sidebar on narrow screens */}
+          {isNarrow && sidebarOpen && (
+            <div
+              className="absolute inset-0 z-20 bg-black/40"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
 
           {/* Main area */}
           <div className="flex-1 flex flex-col min-w-0 bg-background">
